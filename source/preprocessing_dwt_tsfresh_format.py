@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-import pywt, glob
+import pywt
+import glob
 from scipy.signal import butter, filtfilt, find_peaks, peak_widths, peak_prominences
 from tsfresh import extract_features
 
@@ -60,6 +61,7 @@ def suppress_sine(df_sig, cutoff=2500, measurements=800000,
 
     return filtered_sig_df
 
+
 def maddest(d, axis=None):
     """
     Mean Absolute Deviation
@@ -105,6 +107,7 @@ def tsfresh_formatting(df_sig, df_meta):
 
     return tsfresh_df
 
+
 def reduce_mem_usage(df, verbose=True):
     numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
     start_mem = df.memory_usage().sum() / 1024**2
@@ -145,7 +148,7 @@ def main():
     version = "1.1"
     signals = 200
 
-    fc = {'symmetry_looking': [{'r': 1}],
+    fc = {
           'mean': None,
           'number_peaks': [{'n': 100}],
           'first_location_of_maximum': None,
@@ -153,7 +156,9 @@ def main():
                           {'min': -15, 'max': -10}],
           }
 
-    dfs = pd.read_csv('../output/train_sig_2500Hz_4th_order_dwt_tsfresh_format.csv', chunksize=800000 * signals)
+    dfs = pd.read_csv(
+        '../output/train_sig_2500Hz_4th_order_dwt_tsfresh_format.csv',
+        chunksize=800000 * signals)
     train_chunk = 1
 
     for df in dfs:
@@ -203,12 +208,10 @@ def main():
 
     train_chunks = glob.glob(
         "../output/train_chunks/2500Hz_1.1/processed_train_2500Hz_chunk_*.csv")
-    processed_train = pd.concat((pd.read_csv(processed_chunk)
-                                 for processed_chunk in train_chunks))
+    processed_train = pd.concat((pd.read_csv(processed_chunk) for processed_chunk in train_chunks))
     processed_train = processed_train.sort_values('signal_id')
     processed_train = processed_train.drop(['id_measurement', 'phase'], axis=1)
-    processed_train.to_csv('../data/processed_test_2500Hz_' +
-                           version + '.csv', index_label=False)
+    processed_train.to_csv('../data/processed_train_2500Hz_' + version + '.csv', index_label=False)
     print('Saved processed training data')
 
 

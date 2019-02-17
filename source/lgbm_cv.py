@@ -4,25 +4,17 @@ import pandas as pd
 from sklearn.metrics import matthews_corrcoef
 from sklearn.model_selection import StratifiedKFold
 
-train = pd.read_csv('../data/processed_train_2500Hz_1.1.csv')
-# train = train.drop(['signal_id'], axis=1)
-train = train.drop(['signal_id',
-                    # 'amplitude__first_location_of_maximum',
-                    'amplitude__number_peaks__n_100',
-                    # 'amplitude__range_count__max_-10__min_-15',
-                    # 'amplitude__range_count__max_15__min_10',
-                    'amplitude__symmetry_looking__r_1',
-                    'min_peak_height'], axis=1)
+train = pd.read_csv('../data/processed_train_2500Hz_1.2.csv')
+train = train.drop(['signal_id'], axis=1)
 
 num_folds = 10
 SEED = 5000
 y = train['target']
 X = train.drop('target', axis=1)
-features = [feature for feature in X.columns if feature not in [
-    'signal_id', 'amplitude']]
+features = [feature for feature in X.columns if feature not in ['signal_id', 'amplitude']]
 X = X[features]
 folds = StratifiedKFold(n_splits=num_folds, shuffle=True, random_state=SEED)
-version = '1.2'
+version = '1.2_ranged'
 
 oof_preds = np.zeros(len(X))
 feature_importance_df = pd.DataFrame()
@@ -68,14 +60,5 @@ for fold_, (trn_, val_) in enumerate(folds.split(X, y)):
 score = matthews_corrcoef(y, oof_preds)
 print('OVERALL MCC: {:.5f}'.format(score))
 
-feature_importance_df.groupby(
-    'feature',
-    as_index=False).mean().drop(
-        'fold',
-        axis=1) .sort_values(
-            'importance',
-            ascending=False).to_csv(
-                '../output/importance_' +
-                version +
-                '.csv',
-    index=False)
+feature_importance_df.groupby('feature', as_index=False).mean().drop('fold', axis=1)\
+    .sort_values('importance', ascending=False).to_csv('../output/lgbm_importance_' + version + '.csv', index=False)

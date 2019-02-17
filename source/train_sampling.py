@@ -1,4 +1,5 @@
-# Note: Could use SMOTE to handle undersampling negative samples while oversampling positive samples
+# Note: Could use SMOTE to handle undersampling negative samples while
+# oversampling positive samples
 
 import pandas as pd
 
@@ -11,7 +12,8 @@ positive_samples = train[train['target'] == 1]
 print(positive_samples.shape)
 
 num_negative_samples = positive_samples.shape[0]
-negative_samples = train[train['target'] == 0].sample(num_negative_samples, random_state=SEED)
+negative_samples = train[train['target'] == 0].sample(
+    num_negative_samples, random_state=SEED)
 
 print(negative_samples.shape)
 

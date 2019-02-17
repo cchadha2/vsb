@@ -11,8 +11,8 @@ y = train['target']
 X = train.drop('target', axis=1)
 
 
-folds = StratifiedKFold(n_splits=5, 
-                        shuffle=True, 
+folds = StratifiedKFold(n_splits=5,
+                        shuffle=True,
                         random_state=5000)
 
 oof_preds = np.zeros(len(X))
@@ -26,20 +26,20 @@ for fold_, (trn_, val_) in enumerate(folds.split(X, y)):
               'learning_rate': 0.2,
               'num_boosting_rounds': 50,
               }
-    
+
     clf = lgb.LGBMClassifier(**params)
-    clf.fit(trn_x, trn_y, eval_set=(val_x, val_y), early_stopping_rounds=100, verbose=10)
+    clf.fit(trn_x, trn_y, eval_set=(val_x, val_y),
+            early_stopping_rounds=100, verbose=10)
     oof_preds[val_] = clf.predict(val_x)
-    
-    print('no {}-fold MCC: {}'.format(fold_ + 1, matthews_corrcoef(val_y.values, oof_preds[val_])))
-    
+
+    print('no {}-fold MCC: {}'.format(fold_ + 1,
+                                      matthews_corrcoef(val_y.values, oof_preds[val_])))
+
 
 score = matthews_corrcoef(y, oof_preds)
 print('OVERALL MCC: {:.5f}'.format(score))
 
 
-
 print(clf.feature_importances_)
 
 print(X.head())
-

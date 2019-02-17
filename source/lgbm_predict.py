@@ -1,37 +1,35 @@
 import lightgbm as lgb
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 from sklearn.metrics import matthews_corrcoef
 from sklearn.model_selection import StratifiedKFold
 
-train = pd.read_csv('../data/processed_train_2500Hz_1.1.csv')
-test = pd.read_csv('../data/processed_test_2500Hz_1.1.csv')
+train = pd.read_csv('../data/processed_train_2500Hz_1.2.csv')
+test = pd.read_csv('../data/processed_test_2500Hz_1.2.csv')
 
-# train = train.drop('signal_id', axis=1)
-train = train.drop(['signal_id',
-                    # 'amplitude__first_location_of_maximum',
-                    'amplitude__number_peaks__n_100',
-                    # 'amplitude__range_count__max_-10__min_-15',
-                    # 'amplitude__range_count__max_15__min_10',
-                    'amplitude__symmetry_looking__r_1',
-                    'min_peak_height'], axis=1)
+train = train.drop('signal_id', axis=1)
+# train = train.drop(['signal_id',
+#                     # 'amplitude__first_location_of_maximum',
+#                     'amplitude__number_peaks__n_100',
+#                     # 'amplitude__range_count__max_-10__min_-15',
+#                     # 'amplitude__range_count__max_15__min_10',
+#                     'amplitude__symmetry_looking__r_1',
+#                     'min_peak_height'], axis=1)
 
 sub_df = test.drop([column for column in test.columns if column not in [
                    'signal_id']], axis=1).reset_index(drop=True)
 sub_df['target'] = 0
-# test = test.drop(['signal_id'], axis=1)
-test = test.drop(['signal_id',
-                  # 'amplitude__first_location_of_maximum',
-                  'amplitude__number_peaks__n_100',
-                  # 'amplitude__range_count__max_-10__min_-15',
-                  # 'amplitude__range_count__max_15__min_10',
-                  'amplitude__symmetry_looking__r_1',
-                  'min_peak_height'], axis=1)
+test = test.drop(['signal_id'], axis=1)
+# test = test.drop(['signal_id',
+#                   # 'amplitude__first_location_of_maximum',
+#                   'amplitude__number_peaks__n_100',
+#                   # 'amplitude__range_count__max_-10__min_-15',
+#                   # 'amplitude__range_count__max_15__min_10',
+#                   'amplitude__symmetry_looking__r_1',
+#                   'min_peak_height'], axis=1)
 num_folds = 10
 SEED = 5000
-version = '1.5'
+version = '1.6'
 y = train['target']
 X = train.drop('target', axis=1)
 features = [feature for feature in X.columns if feature not in [
